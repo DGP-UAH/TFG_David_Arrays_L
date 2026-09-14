@@ -95,7 +95,7 @@ fprintf('  Caso límite (end-fire): %.1f%%\n', tasa_acierto(2));
 
 
 figure;
-bar([100, 52]);
+bar(tasa_acierto);
 set(gca, 'XTickLabel', {'Caso favorable', 'Caso límite (end-fire)'});
 ylabel('Tasa de emparejamiento correcto (%)');
 title('Tasa de emparejamiento correcto — N_{MC}=1000');

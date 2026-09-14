@@ -27,7 +27,7 @@ w_null = (V') \ B_deseado(:);
 
 %% Verificación: patrón resultante con el nulo impuesto 
 [pat_null, ~] = pattern(Array, Frequency, 0, -90:0.01:90, ...
-    'PropagationSpeed', Propaga'tionSpeed, 'CoordinateSystem', 'polar', ...
+    'PropagationSpeed', PropagationSpeed, 'CoordinateSystem', 'polar', ...
     'weights', w_null, 'Type', 'Directivity');
 
 figure;
@@ -40,3 +40,34 @@ title(sprintf('Null steering: nulo en %.0f°, apuntamiento en %.0f°', theta_int
 % Comprobación numérica del nulo
 idx_int = find(abs((-90:0.01:90) - theta_int) < 0.01, 1);
 fprintf('Nivel en la dirección de interferencia: %.2f dB\n', pat_null(idx_int) - max(pat_null));
+
+%% Comparación: dos diagramas polares lado a lado (original vs. null steering)
+
+% Patrón original (pesos uniformes)
+w_uniforme = ones(N,1)/N;
+[pat_uniforme, ang] = pattern(Array, Frequency, 0, -90:0.1:90, ...
+    'PropagationSpeed', PropagationSpeed, 'CoordinateSystem', 'polar', ...
+    'weights', w_uniforme, 'Type', 'Directivity');
+
+% Patrón con null steering (w_null ya calculado previamente)
+[pat_null_polar, ~] = pattern(Array, Frequency, 0, -90:0.1:90, ...
+    'PropagationSpeed', PropagationSpeed, 'CoordinateSystem', 'polar', ...
+    'weights', w_null, 'Type', 'Directivity');
+
+figure('Position', [100 100 1000 500]);
+
+% --- Panel izquierdo: patrón original ---
+subplot(1,2,1);
+pattern(Array, Frequency, 0, -90:0.1:90, ...
+    'PropagationSpeed', PropagationSpeed, 'CoordinateSystem', 'polar', ...
+    'weights', w_uniforme, 'Type', 'Directivity');
+title('Patrón original (sin null steering)');
+
+% --- Panel derecho: patrón con nulo impuesto ---
+subplot(1,2,2);
+pattern(Array, Frequency, 0, -90:0.1:90, ...
+    'PropagationSpeed', PropagationSpeed, 'CoordinateSystem', 'polar', ...
+    'weights', w_null, 'Type', 'Directivity');
+title(sprintf('Con null steering: nulo en %.0f°, apuntamiento en %.0f°', theta_int, theta_T));
+
+sgtitle('Comparación del patrón de radiación: efecto del null steering');
